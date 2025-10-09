@@ -18,7 +18,7 @@ services:
     volumes:
       - ./services/user-service:/var/www/html
     environment:
-      - DATABASE_URL=postgresql://app:strongpassword@postgres:5432/user_service
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/user_service
     depends_on:
       - postgres
     expose:
@@ -30,7 +30,7 @@ services:
     volumes:
       - ./services/order-service:/var/www/html
     environment:
-      - DATABASE_URL=postgresql://app:strongpassword@postgres:5432/order_service
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/order_service
     depends_on:
       - postgres
     expose:
@@ -42,7 +42,7 @@ services:
     volumes:
       - ./services/notification-service:/var/www/html
     environment:
-      - DATABASE_URL=postgresql://app:strongpassword@postgres:5432/notification_service
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/notification_service
     depends_on:
       - postgres
     expose:
@@ -52,8 +52,8 @@ services:
     image: postgres:15
     container_name: postgres
     environment:
-      POSTGRES_USER: app
-      POSTGRES_PASSWORD: strongpassword
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - pgdata:/var/lib/postgresql/data
       - ./postgres-init:/docker-entrypoint-initdb.d:ro

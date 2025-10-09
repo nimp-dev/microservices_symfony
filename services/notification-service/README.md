@@ -1,1 +1,0 @@
-# notification-service\nThis microservice uses Symfony components (http-foundation + routing).\nEndpoints:\n- /notify\n- /notify/ping\n

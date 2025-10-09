@@ -1,19 +1,47 @@
 
 Symfony-based PHP microservices example (lightweight) — gateway + 3 services + PostgreSQL
 
-How to run:
-1. Ensure Docker and Docker Compose are installed.
-2. In the project root run:
-   docker compose up --build -d
-3. Open http://localhost:8080/ and use endpoints:
-   - http://localhost:8080/users
-   - http://localhost:8080/users/ping
-   - http://localhost:8080/orders
-   - http://localhost:8080/orders/ping
-   - http://localhost:8080/notify
-   - http://localhost:8080/notify/ping
+lightweight
 
-Notes:
-- Each service contains a composer.json requiring Symfony components. Composer will run during image build.
-- PostgreSQL container creates empty databases for each service using the init script in `postgres-init/`.
-- This is a minimal educational example. In production you'd use php-fpm + nginx, proper env management, migrations, and stronger security.
+
+## Services
+- **user-service** — manages user data
+- **order-service** — manages orders
+- **notification-service** — sends notifications
+
+
+
+
+### Using Make (Recommended)
+```bash
+# 1. Setup environment
+make setup
+
+# 2. Start all services
+make start
+
+# 3. Access the application
+open http://localhost:8080
+```
+### Manual Setup
+```bash
+# 1. Start services
+docker-compose up -d --build
+```
+
+```bash
+make setup          # Create .env files
+make start          # Start all services
+make stop           # Stop services
+make logs           # View logs
+make reset          # Full reset and restart
+make help           # Show all commands
+```
+
+## Visit:
+
+http://localhost:8080/user/
+
+http://localhost:8080/order/
+
+http://localhost:8080/notification/

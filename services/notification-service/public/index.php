@@ -1,2 +1,9 @@
-# В папке services/notification-service/public/index.php
-echo '<?php echo "Notification Service is working! Path: " . $_SERVER["REQUEST_URI"]; ?>' > services/notification-service/public/index.php
+<?php
+
+use App\Kernel;
+
+require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
+
+return function (array $context) {
+    return new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
+};
