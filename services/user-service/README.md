@@ -1,0 +1,1 @@
+# user-service\nThis microservice uses Symfony components (http-foundation + routing).\nEndpoints:\n- /users\n- /users/ping\n
