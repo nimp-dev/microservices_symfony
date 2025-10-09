@@ -1,1 +1,0 @@
-# order-service\nThis microservice uses Symfony components (http-foundation + routing).\nEndpoints:\n- /orders\n- /orders/ping\n

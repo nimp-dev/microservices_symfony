@@ -1,5 +1,0 @@
-# order-service/config/routes.yaml
-order_list:
-  path: /orders
-  controller: App\Controller\OrderController::index
-  methods: [GET]
