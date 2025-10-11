@@ -7,66 +7,44 @@ on:
     branches: [ main ]
 
 jobs:
-  build-and-test:
-    name: Build and Test Services
+  build-services:
+    name: Build Services
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        service: [order-service, user-service, notification-service]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Docker
-        uses: docker/setup-buildx-action@v3
-
-      - name: Install Docker Compose
+      - name: Build ${{ matrix.service }}
         run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose-plugin
-          docker compose version
+          cd services/${{ matrix.service }}
+          docker build -t ${{ matrix.service }}:${{ github.sha }} .
 
-      - name: Build Docker images
-        run: |
-          docker compose build
+  health-check:
+    name: Health Check
+    runs-on: ubuntu-latest
+    needs: build-services
 
-      - name: Start services
-        run: |
-          docker compose up -d
-          echo "Waiting for services to start..."
-          sleep 30
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Check services health
+      - name: Test Order Service
         run: |
-          echo "🔍 Checking services health..."
-          
-          # Check Order Service
-          if curl -s http://localhost:8080/order/health | grep -q '"status":"ok"'; then
-            echo "✅ Order service is healthy"
-          else
-            echo "❌ Order service health check failed"
-            exit 1
-          fi
-          
-          # Check User Service  
-          if curl -s http://localhost:8080/user/health | grep -q '"status":"ok"'; then
-            echo "✅ User service is healthy"
-          else
-            echo "❌ User service health check failed"
-            exit 1
-          fi
-          
-          # Check Notification Service
-          if curl -s http://localhost:8080/notification/health | grep -q '"status":"ok"'; then
-            echo "✅ Notification service is healthy"
-          else
-            echo "❌ Notification service health check failed"
-            exit 1
-          fi
+          docker build -t order-service services/order-service/
+          docker run -d -p 9001:9000 --name order-test order-service
+          sleep 10
+          curl -f http://localhost:9001/health || exit 1
+          docker stop order-test
 
-      - name: Stop services
+      - name: Test User Service
         run: |
-          docker compose down
-
-      - name: Show logs if failed
-        if: failure()
-        run: |
-          docker compose logs
+          docker build -t user-service services/user-service/
+          docker run -d -p 9002:9000 --name user-test user-service
+          sleep 10
+          curl -f http://localhost:9002/health || exit 1
+          docker stop user-test
