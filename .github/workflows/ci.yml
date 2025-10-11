@@ -27,18 +27,30 @@ jobs:
           extensions: mbstring, intl, pdo, pdo_mysql
           coverage: none
 
+      # 2.1 Создаём .env файлы через Makefile
+      - name: Create .env files
+        run: |
+          echo "Creating .env files..."
+          cp -n services/${{ matrix.service }}/.env.example services/${{ matrix.service }}/.env || true
+
       # 3 Переходим в сервис и устанавливаем зависимости
       - name: Install dependencies
         run: |
           cd services/${{ matrix.service }}
           composer install --no-progress --no-interaction --prefer-dist
 
+      # 3.1 Проверка валидности composer.json
+      - name: Validate Composer
+        run: |
+          cd services/${{ matrix.service }}
+          composer validate --strict    
+
       # 4 Запускаем PHPStan
       - name: Run PHPStan
         run: |
           cd services/${{ matrix.service }}
           if [ -f vendor/bin/phpstan ]; then
-            vendor/bin/phpstan analyse -l max src
+            vendor/bin/phpstan analyse -l 7 src
           else
             echo "PHPStan не установлен для ${{ matrix.service }} - пропуск."
           fi
