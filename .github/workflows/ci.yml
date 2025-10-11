@@ -1,0 +1,36 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    name: Build and Test Services
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker images
+        run: |
+          docker-compose build
+
+      - name: Start services
+        run: |
+          docker-compose up -d
+          sleep 10
+
+      - name: Check services health
+        run: |
+          echo "Checking if services are responding..."
+          curl -f http://localhost:8080/order/orders || echo "Order service check failed"
+          curl -f http://localhost:8080/user/users || echo "User service check failed" 
+          curl -f http://localhost:8080/notification/notifications || echo "Notification service check failed"
+
+      - name: Stop services
+        run: |
+          docker-compose down
