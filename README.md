@@ -1,5 +1,5 @@
 
-Symfony-based PHP microservices example (lightweight) — gateway + 3 services + PostgreSQL
+Symfony-based PHP microservices Monorepo example (lightweight) — gateway + 3 services + PostgreSQL
 
 lightweight
 
