@@ -1,4 +1,6 @@
 {
+    "name": "symfony-microservices/notification-service",
+    "description": "Symfony Microservices - Notification Service",
     "type": "project",
     "license": "proprietary",
     "minimum-stability": "stable",

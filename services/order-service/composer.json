@@ -1,5 +1,7 @@
 {
     "type": "project",
+    "name": "symfony-microservices/order-service",
+    "description": "Symfony Microservices - Order Service",
     "license": "proprietary",
     "minimum-stability": "stable",
     "prefer-stable": true,
