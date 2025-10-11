@@ -11,11 +11,9 @@ class HealthController extends AbstractController
     #[Route('/health', name: 'health_check')]
     public function health(): JsonResponse
     {
-        throw new \Exception('test');
         return $this->json([
-            'status' => 'ok',
-            'service' => 'order',
-            'timestamp' => time()
-        ]);
+            'status' => 'error',
+            'message' => 'test 500 status code'
+        ], 500);
     }
 }
