@@ -33,18 +33,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Test Order Service
+      - name: Test ${{ matrix.service }}
         run: |
-          docker build -t order-service services/order-service/
-          docker run -d -p 9001:9000 --name order-test order-service
-          sleep 10
-          curl -f http://localhost:9001/health || exit 1
-          docker stop order-test
-
-      - name: Test User Service
-        run: |
-          docker build -t user-service services/user-service/
-          docker run -d -p 9002:9000 --name user-test user-service
-          sleep 10
-          curl -f http://localhost:9002/health || exit 1
-          docker stop user-test
+          cd services/${{ matrix.service }}
+          docker build -t ${{ matrix.service }} .
+          docker run -d -p 8000:8000 --name test-${{ matrix.service }} \
+            ${{ matrix.service }} php -S 0.0.0.0:8000 -t public
+          sleep 5
+          curl -f http://localhost:8000/health || (docker logs test-${{ matrix.service }} && exit 1)
+          docker stop test-${{ matrix.service }}
