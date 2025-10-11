@@ -15,6 +15,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup Docker Compose
+        uses: isbang/compose-action@v1.5.1
+
       - name: Build Docker images
         run: |
           docker-compose build
@@ -22,14 +25,36 @@ jobs:
       - name: Start services
         run: |
           docker-compose up -d
-          sleep 10
+          echo "Waiting for services to start..."
+          sleep 30
 
       - name: Check services health
         run: |
-          echo "Checking if services are responding..."
-          curl -f http://localhost:8080/order/orders || echo "Order service check failed"
-          curl -f http://localhost:8080/user/users || echo "User service check failed" 
-          curl -f http://localhost:8080/notification/notifications || echo "Notification service check failed"
+          echo "🔍 Checking services health..."
+          
+          # Check Order Service
+          if curl -s http://localhost:8080/order/health | grep -q '"status":"ok"'; then
+            echo "✅ Order service is healthy"
+          else
+            echo "❌ Order service health check failed"
+            exit 1
+          fi
+          
+          # Check User Service  
+          if curl -s http://localhost:8080/user/health | grep -q '"status":"ok"'; then
+            echo "✅ User service is healthy"
+          else
+            echo "❌ User service health check failed"
+            exit 1
+          fi
+          
+          # Check Notification Service
+          if curl -s http://localhost:8080/notification/health | grep -q '"status":"ok"'; then
+            echo "✅ Notification service is healthy"
+          else
+            echo "❌ Notification service health check failed"
+            exit 1
+          fi
 
       - name: Stop services
         run: |
