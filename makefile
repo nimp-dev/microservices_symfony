@@ -1,4 +1,4 @@
-.PHONY: setup start stop logs clean help
+.PHONY: setup start stop logs clean test lint help
 
 ## Setup project environment
 setup:
@@ -33,6 +33,27 @@ clean:
 ## Reset everything and start fresh
 reset: clean setup start
 
+## Run PHPUnit tests for all services
+test:
+	@echo "🧪 Running tests for all services..."
+	@for dir in services/*; do \
+		if [ -f $$dir/vendor/bin/phpunit ]; then \
+			echo "→ Testing $$dir"; \
+			( cd $$dir && APP_ENV=test vendor/bin/phpunit ); \
+		fi; \
+	done
+
+## Run PHPStan static analysis
+lint:
+	@echo "🔍 Running PHPStan..."
+	@for dir in services/*; do \
+		if [ -f $$dir/vendor/bin/phpstan ]; then \
+			echo "→ Linting $$dir"; \
+			( cd $$dir && vendor/bin/phpstan analyse src --level=max ); \
+		fi; \
+	done
+
+
 ## Show this help
 help:
 	@echo "Available commands:"
@@ -42,4 +63,6 @@ help:
 	@echo "  make logs     - Show logs"
 	@echo "  make clean    - Remove containers and .env files"
 	@echo "  make reset    - Full reset and restart"
+	@echo "  make test     - Run test for services"
+	@echo "  make lint     - Chek services with PhpStan"
 	@echo "  make help     - Show this help"

@@ -34,6 +34,8 @@ make setup          # Create .env files
 make start          # Start all services
 make stop           # Stop services
 make logs           # View logs
+make test           # Run tests
+make lint           # Lint code
 make reset          # Full reset and restart
 make help           # Show all commands
 ```
