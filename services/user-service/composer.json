@@ -15,7 +15,7 @@
         "symfony/framework-bundle": "7.3.*",
         "symfony/runtime": "7.3.*",
         "symfony/yaml": "7.3.*",
-        "microservices/shared-contracts": ">=1"
+        "microservices/shared-contracts": "1.*"
     },
     "require-dev": {
         "phpunit/phpunit": "^11.5.42",
