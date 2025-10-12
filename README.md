@@ -32,6 +32,7 @@ docker-compose up -d --build
 ```bash
 make setup          # Create .env files
 make start          # Start all services
+make update         # Update services
 make stop           # Stop services
 make logs           # View logs
 make test           # Run tests

@@ -13,11 +13,12 @@ WORKDIR /var/www/html
 # Copy app
 COPY . .
 
+# Install PHP deps
+RUN composer install --no-interaction --prefer-dist --no-scripts || true
+
 RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 9000
 
 CMD ["php-fpm", "-F", "-R"]
 
-# Install PHP deps
-RUN composer install --no-interaction --prefer-dist --no-scripts || true

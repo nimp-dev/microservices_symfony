@@ -1,0 +1,27 @@
+{
+  "name": "microservices/shared-contracts",
+  "type": "library",
+  "description": "Shared contracts and DTOs for microservices platform",
+  "keywords": ["microservices", "contracts", "dto", "api"],
+  "license": "MIT",
+  "version": "1.0.0",
+  "require": {
+    "php": "^8.3"
+  },
+  "autoload": {
+    "psr-4": {
+      "Microservices\\SharedContracts\\": "contracts/",
+      "Microservices\\SharedEvents\\": "events/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Microservices\\SharedContracts\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "branch-alias": {
+      "dev-main": "1.0.x-dev"
+    }
+  }
+}

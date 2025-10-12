@@ -27,7 +27,7 @@ jobs:
           extensions: mbstring, intl, pdo, pdo_mysql
           coverage: none
 
-      # 2.1 Создаём .env файлы через Makefile
+      # 2.1 Создаём .env файлы
       - name: Create .env files
         run: |
           echo "Creating .env files..."

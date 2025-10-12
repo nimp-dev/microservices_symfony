@@ -1,4 +1,20 @@
-.PHONY: setup start stop logs clean test lint help
+.PHONY: setup start stop reset logs clean test lint help update
+
+## Update dependencies in all services
+update:
+	@echo "📦 Updating shared and service dependencies..."
+	@set -e; \
+	if [ -f "shared/composer.json" ]; then \
+		echo "→ Updating shared package..."; \
+		(cd shared && composer update --no-interaction --prefer-dist); \
+	fi; \
+	for service in services/*; do \
+		if [ -f "$$service/composer.json" ]; then \
+			echo "→ Updating $$service..."; \
+			(cd "$$service" && composer update --no-interaction --prefer-dist); \
+		fi; \
+	done
+	@echo "✅ All dependencies updated successfully."
 
 ## Setup project environment
 setup:
@@ -23,12 +39,12 @@ stop:
 logs:
 	docker-compose logs -f
 
-
 ## Clean up (remove containers, volumes)
 clean:
 	@echo "🧹 Cleaning up..."
 	docker-compose down -v
 	rm -f services/*/.env
+	rm -r services/*/var/
 
 ## Reset everything and start fresh
 reset: clean setup start
@@ -53,7 +69,6 @@ lint:
 		fi; \
 	done
 
-
 ## Show this help
 help:
 	@echo "Available commands:"
@@ -63,6 +78,7 @@ help:
 	@echo "  make logs     - Show logs"
 	@echo "  make clean    - Remove containers and .env files"
 	@echo "  make reset    - Full reset and restart"
+	@echo "  make update   - Update dependencies in all services"
 	@echo "  make test     - Run test for services"
-	@echo "  make lint     - Chek services with PhpStan"
+	@echo "  make lint     - Check services with PhpStan"
 	@echo "  make help     - Show this help"
