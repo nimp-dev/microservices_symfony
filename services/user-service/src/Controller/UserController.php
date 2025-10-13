@@ -77,9 +77,10 @@ class UserController extends AbstractController
     #[Route('/get/{id}', name: 'user_get', methods: ['GET'])]
     public function get(int $id): JsonResponse
     {
+        /** @var User|null $user */
         $user = $this->userRepository->find($id);
 
-        if (!$user) {
+        if (is_null($user)) {
             return $this->json([
                 'error' => 'User not found'
             ], 404);

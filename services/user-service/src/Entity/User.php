@@ -31,10 +31,10 @@ class User implements PasswordAuthenticatedUserInterface
     private string $status = 'active';
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private ?\DateTimeImmutable $createdAt;
+    private \DateTimeImmutable $createdAt;
 
     #[ORM\Column(type: 'datetime_immutable')]
-    private ?\DateTimeImmutable $updatedAt;
+    private \DateTimeImmutable $updatedAt;
 
     public function __construct()
     {
@@ -43,14 +43,14 @@ class User implements PasswordAuthenticatedUserInterface
     }
 
     // Геттеры
-    public function getId(): ?string { return $this->id; }
+    public function getId(): ?int { return $this->id; }
     public function getEmail(): ?string { return $this->email; }
     public function getFirstName(): ?string { return $this->firstName; }
     public function getLastName(): ?string { return $this->lastName; }
     public function getPassword(): ?string { return $this->password; }
     public function getStatus(): string { return $this->status; }
-    public function getCreatedAt(): ?\DateTimeImmutable { return $this->createdAt; }
-    public function getUpdatedAt(): ?\DateTimeImmutable { return $this->updatedAt; }
+    public function getCreatedAt(): \DateTimeImmutable { return $this->createdAt; }
+    public function getUpdatedAt(): \DateTimeImmutable { return $this->updatedAt; }
 
     // Сеттеры
     public function setEmail(string $email): self {
