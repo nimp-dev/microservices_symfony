@@ -43,8 +43,8 @@ logs:
 clean:
 	@echo "🧹 Cleaning up..."
 	docker-compose down -v
-	rm -f services/*/.env
-	rm -r services/*/var/
+	@rm -f services/*/.env
+	@rm -rf services/*/var/ 2>/dev/null || true
 
 ## Reset everything and start fresh
 reset: clean setup start
