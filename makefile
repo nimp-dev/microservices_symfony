@@ -69,6 +69,29 @@ lint:
 		fi; \
 	done
 
+## Install dependencies for a specific service inside container
+composer-install:
+	@if [ -z "$(service)" ]; then \
+		echo "❌ Usage: make composer-install service=<service_name>"; \
+		echo "Example: make composer-install service=user-service"; \
+		exit 1; \
+	fi
+	@echo "📦 Installing dependencies for $(service)..."
+	@docker compose exec $(service) composer install --no-interaction --prefer-dist --optimize-autoloader
+	@echo "✅ Dependencies installed for $(service)."
+
+## Update dependencies for a specific service inside container
+composer-update:
+	@if [ -z "$(service)" ]; then \
+		echo "❌ Usage: make composer-update service=<service_name>"; \
+		echo "Example: make composer-update service=order-service"; \
+		exit 1; \
+	fi
+	@echo "📦 Updating dependencies for $(service)..."
+	@docker compose exec $(service) composer update --no-interaction --prefer-dist --optimize-autoloader
+	@echo "✅ Dependencies updated for $(service)."
+
+
 ## Show this help
 help:
 	@echo "Available commands:"

@@ -1,6 +1,6 @@
 <?php
-namespace App\Controller;
 
+namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
@@ -10,15 +10,16 @@ use Microservices\SharedEvents\UserRegisteredEvent;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 class UserController extends AbstractController
 {
-
     public function __construct(
         readonly private UserRepository $userRepository,
         readonly private UserPasswordHasherInterface $passwordHasher,
+        readonly private MessageBusInterface $messageBus,
     ) {}
 
     #[Route('/create', name: 'user_create', methods: ['POST'])]
@@ -26,6 +27,13 @@ class UserController extends AbstractController
     {
         // Данные из запроса
         $data = json_decode($request->getContent(), true);
+
+        // Валидация обязательных полей
+        if (!isset($data['email'], $data['firstName'], $data['lastName'], $data['password'])) {
+            return $this->json([
+                'error' => 'Missing required fields: email, firstName, lastName, password'
+            ], 400);
+        }
 
         // Проверяем существует ли пользователь
         $existingUser = $this->userRepository->findByEmail($data['email']);
@@ -50,25 +58,28 @@ class UserController extends AbstractController
         // Сохраняем в БД
         $this->userRepository->save($user, true);
 
+        // Создаем и отправляем событие
+        $event = new UserRegisteredEvent(
+            eventId: uniqid('user_reg_', true),
+            userId: (string)$user->getId(),
+            email: $user->getEmail(),
+            firstName: $user->getFirstName(),
+            lastName: $user->getLastName(),
+            registeredAt: $user->getCreatedAt()
+        );
+
+        // Отправляем событие в RabbitMQ
+        $this->messageBus->dispatch($event);
+
         // Создаем ответ по контракту
         $userResponse = new UserResponse(
-            id: (string)$user->getId(),  // Преобразуем int в string для контракта
+            id: (string)$user->getId(),
             email: $user->getEmail(),
             firstName: $user->getFirstName(),
             lastName: $user->getLastName(),
             status: $user->getStatus(),
             createdAt: $user->getCreatedAt(),
             updatedAt: $user->getUpdatedAt()
-        );
-
-        // Создаем событие
-        $event = new UserRegisteredEvent(
-            eventId: uniqid('event_'),
-            userId: (string)$user->getId(),
-            email: $user->getEmail(),
-            firstName: $user->getFirstName(),
-            lastName: $user->getLastName(),
-            registeredAt: $user->getCreatedAt()
         );
 
         return $this->json($userResponse, 201);
