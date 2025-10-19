@@ -12,8 +12,8 @@ class HealthController extends AbstractController
     public function health(): JsonResponse
     {
         return $this->json([
-            'status' => 'error',
-            'message' => 'test 500 status code'
-        ], 500);
+            'status' => 'success',
+            'message' => 'is running'
+        ], 200);
     }
 }

@@ -1,0 +1,28 @@
+monolog:
+    channels:
+        - messenger
+
+    handlers:
+        main:
+            type: fingers_crossed
+            action_level: error
+            handler: nested
+            excluded_http_codes: [404, 405]
+            channels: ["!messenger"]
+
+        nested:
+            type: stream
+            path: "%kernel.logs_dir%/%kernel.environment%.log"
+            level: debug
+
+        console:
+            type: console
+            process_psr_3_messages: false
+            channels: ["!messenger", "!event"]
+
+        # Логи Messenger в отдельный файл
+        messenger:
+            type: stream
+            path: "%kernel.logs_dir%/messenger.%kernel.environment%.log"
+            level: debug
+            channels: [messenger]

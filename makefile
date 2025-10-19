@@ -1,4 +1,4 @@
-.PHONY: setup start stop reset logs clean test lint help update
+.PHONY: setup start stop reset logs clean test lint help update db-user db-order rabbit-listen
 
 ## Update dependencies in all services
 update:
@@ -29,6 +29,11 @@ setup:
 start:
 	@echo "🐳 Starting all services..."
 	docker-compose up -d --build
+	@docker-compose exec -d notification-service php bin/console messenger:consume async
+
+## run listener
+rabbit-listen:
+	@docker-compose exec notification-service php bin/console messenger:consume async
 
 ## Stop all services
 stop:
@@ -90,6 +95,11 @@ composer-update:
 	@echo "📦 Updating dependencies for $(service)..."
 	@docker compose exec $(service) composer update --no-interaction --prefer-dist --optimize-autoloader
 	@echo "✅ Dependencies updated for $(service)."
+
+db-user:
+	@docker compose exec user-db psql -U app -d user_service
+db-order:
+	@docker compose exec order-db psql -U app -d order_service
 
 
 ## Show this help
