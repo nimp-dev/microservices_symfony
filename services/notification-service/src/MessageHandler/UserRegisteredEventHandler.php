@@ -48,9 +48,6 @@ class UserRegisteredEventHandler
         // Имитация отправки email
         $this->logger->info("📧 Sending welcome email to: {$email}");
         $this->logger->info("👋 Dear {$firstName} {$lastName}, welcome to our platform!");
-
-        // Заглушка для реальной отправки email
-        // sleep(1);
     }
 
     private function sendPushNotification(string $userId, string $firstName): void
@@ -58,8 +55,5 @@ class UserRegisteredEventHandler
         // Имитация отправки push-уведомления
         $this->logger->info("📱 Sending push notification to user: {$userId}");
         $this->logger->info("🔔 Welcome {$firstName}! Your account has been created successfully.");
-
-        // Заглушка для реальной отправки push
-        // sleep(1);
     }
 }
