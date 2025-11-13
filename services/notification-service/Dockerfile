@@ -23,6 +23,10 @@ RUN composer install --no-interaction --prefer-dist --no-scripts || true
 
 RUN chown -R www-data:www-data /var/www/html
 
+# Copy startup script
+COPY start.sh /start.sh
+RUN chmod +x /start.sh
+
 EXPOSE 9000
 
-CMD ["php-fpm", "-F", "-R"]
+CMD ["/start.sh"]

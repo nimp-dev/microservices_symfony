@@ -29,7 +29,6 @@ setup:
 start:
 	@echo "🐳 Starting all services..."
 	docker-compose up -d --build
-	@docker-compose exec -d notification-service php bin/console messenger:consume async
 
 ## run listener
 rabbit-listen:
