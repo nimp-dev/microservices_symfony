@@ -1,6 +1,7 @@
 monolog:
     channels:
         - deprecation # Deprecations are logged in the dedicated "deprecation" channel when it exists
+        - user_password_hasher
 
 when@dev:
     monolog:
@@ -9,7 +10,7 @@ when@dev:
                 type: stream
                 path: "%kernel.logs_dir%/%kernel.environment%.log"
                 level: debug
-                channels: ["!event"]
+                channels: ["!event", "!user_password_hasher"]
             # uncomment to get logging in your browser
             # you may have to allow bigger header sizes in your Web server configuration
             #firephp:
@@ -22,6 +23,12 @@ when@dev:
                 type: console
                 process_psr_3_messages: false
                 channels: ["!event", "!doctrine", "!console"]
+
+            user_password_hasher:
+                type: stream
+                path: "%kernel.logs_dir%/user_password_hasher.%kernel.environment%.log"
+                level: info
+                channels: [ user_password_hasher ]
 
 when@test:
     monolog:
