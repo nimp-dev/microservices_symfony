@@ -22,7 +22,7 @@ sleep 3
 
 # Запускаем Messenger worker (блокирующая команда)
 echo "🔄 Starting Messenger worker..."
-php bin/console messenger:consume async -vv > /var/www/html/var/log/messenger.log 2>&1
+php bin/console messenger:consume async
 
 # Если worker упадет, контейнер завершится
 echo "❌ Messenger worker stopped"

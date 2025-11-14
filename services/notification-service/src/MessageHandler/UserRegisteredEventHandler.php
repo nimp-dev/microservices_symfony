@@ -3,9 +3,11 @@
 namespace App\MessageHandler;
 
 use Microservices\SharedEvents\UserRegisteredEvent;
+use Monolog\Attribute\WithMonologChannel;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
+#[WithMonologChannel('user_register')]
 #[AsMessageHandler]
 class UserRegisteredEventHandler
 {
