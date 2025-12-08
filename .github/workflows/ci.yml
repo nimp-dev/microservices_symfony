@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd services/${{ matrix.service }}
-          composer install --no-progress --no-interaction --prefer-dist
+          composer install --no-scripts --no-progress --no-interaction --prefer-dist
 
       # 3.1 Проверка валидности composer.json
       - name: Validate Composer
