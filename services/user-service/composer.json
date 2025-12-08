@@ -90,7 +90,7 @@
     "repositories": [
         {
             "type": "path",
-            "url": "./shared",
+            "url": "../../shared",
             "options": {
                 "symlink": false
             }
