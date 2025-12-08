@@ -3,20 +3,27 @@
 namespace App\State;
 
 use ApiPlatform\Metadata\Operation;
+use ApiPlatform\Metadata\Post;
 use ApiPlatform\State\ProcessorInterface;
 use App\Entity\User;
+use Exception;
 use Microservices\SharedEvents\UserRegisteredEvent;
 use Monolog\Attribute\WithMonologChannel;
 use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Messenger\Exception\ExceptionInterface;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
+/**
+ * @implements ProcessorInterface<User, User>
+ */
 #[WithMonologChannel('user_password_hasher')]
 class UserPasswordHasher implements ProcessorInterface
 {
     public function __construct(
+        /**
+         * @var ProcessorInterface<User, User>
+         */
         private ProcessorInterface $processor,
         private UserPasswordHasherInterface $passwordHasher,
         private MessageBusInterface $messageBus,
@@ -24,15 +31,11 @@ class UserPasswordHasher implements ProcessorInterface
     ) {}
 
     /**
+     * @param User $data
      * @throws ExceptionInterface
      */
     public function process(mixed $data, Operation $operation, array $uriVariables = [], array $context = [])
     {
-        if (!$data instanceof User) {
-            $this->logger->info('❌ Not a User instance, passing through');
-            return $this->processor->process($data, $operation, $uriVariables, $context);
-        }
-
         $this->logger->info('🔄 UserPasswordHasher: Processing user creation', [
             'email' => $data->getEmail(),
             'operation' => $operation->getName()
@@ -55,7 +58,7 @@ class UserPasswordHasher implements ProcessorInterface
             $result = $this->processor->process($data, $operation, $uriVariables, $context);
             $this->logger->info('✅ Standard processor completed successfully');
 
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $this->logger->error('❌ Error in standard processor', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
@@ -64,7 +67,7 @@ class UserPasswordHasher implements ProcessorInterface
         }
 
         // Отправляем событие только после успешного создания пользователя
-        if ($operation->getName() === 'post' || $operation instanceof \ApiPlatform\Metadata\Post) {
+        if ($operation->getName() === 'post' || $operation instanceof Post) {
             $this->logger->info('🎉 User created successfully, sending event to RabbitMQ', [
                 'userId' => $data->getId(),
                 'email' => $data->getEmail(),
